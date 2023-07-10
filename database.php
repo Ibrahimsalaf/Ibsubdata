@@ -1,0 +1,476 @@
+<?php
+if(!defined('ABSPATH')){
+die();
+}
+global $wpdb;
+$stable_name = $wpdb->prefix.'vp_withdrawal';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $stable_name(
+id int NOT NULL AUTO_INCREMENT,
+name text ,
+description text ,
+amount text ,
+status text ,
+user_id int ,
+the_time text ,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+vp_updateoption("vtupress_withdrawal","yes");
+
+
+
+global $wpdb;
+$stable_name = $wpdb->prefix.'vp_wallet';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $stable_name(
+id int NOT NULL AUTO_INCREMENT,
+type text ,
+name text ,
+description text ,
+fund_amount text ,
+before_amount text,
+now_amount text,
+user_id int ,
+the_time text ,
+status text,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+
+
+global $wpdb;
+$stable_name = $wpdb->prefix.'vp_coupon';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $stable_name(
+id int NOT NULL AUTO_INCREMENT,
+code text ,
+applicable_to text ,
+amount text ,
+used_by text,
+status text,
+the_time text ,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+
+global $wpdb;
+$stable_name = $wpdb->prefix.'vp_message';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $stable_name(
+id int NOT NULL AUTO_INCREMENT,
+user_id text ,
+user_name text ,
+user_token text ,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+
+
+
+
+
+function create_s_transaction(){
+
+vp_updateoption('suc','successful');
+
+global $wpdb;
+$table_name = $wpdb->prefix.'vpwebhook';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $table_name(
+id int NOT NULL AUTO_INCREMENT,
+service text,
+service_id text,
+request_id text,
+response_id text,
+resp_log text,
+the_time text ,
+server_ip text,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+
+global $wpdb;
+$table_name = $wpdb->prefix.'sairtime';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $table_name(
+id int NOT NULL AUTO_INCREMENT,
+name text ,
+email varchar(255),
+network text,
+phone text,
+bal_bf text,
+bal_nw text,
+amount text,
+resp_log text,
+user_id int,
+status text,
+the_time text,
+request_id text,
+response_id text,
+run_code text,
+via text,
+browser text,
+time_taken text,
+trans_type text,
+trans_method text,
+queried text,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+}
+//Default Datas to sairtime (s-airtime db)
+function addsdata(){
+global $wpdb;
+$name='Vtupress Plugin';
+$email='vtupress.com@gmail.com';
+$network='mtn';
+$bal_bf ='0';
+$bal_nw ='0';
+$phone= '07049626922';
+$amount= '0';
+$tid = '1';
+$table_name = $wpdb->prefix.'sairtime';
+$wpdb->insert($table_name, array(
+'name'=> $name,
+'email'=> $email,
+'network' => $network,
+'phone' => $phone,
+'bal_bf' => $bal_bf,
+'bal_nw' => $bal_nw,
+'amount' => $amount,
+'resp_log' => "sample of successful airtime log",
+'user_id' => $tid,
+'status' => 'successful',
+'request_id' => '2022',
+'time_taken' => '0s',
+'browser' => 'CHROME',
+'via' => 'site',
+'trans_type' => 'vtu',
+'trans_method' => 'none',
+'queried' => '0',
+'the_time' => current_time('mysql', 1)
+));
+}
+//create failed Airtime transaction db
+
+function create_sd_transaction(){
+global $wpdb;
+$sd_name = $wpdb->prefix.'sdata';
+$charset_collate=$wpdb->get_charset_collate();
+$sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+id int NOT NULL AUTO_INCREMENT,
+name text ,
+email varchar(255),
+plan text ,
+network text ,
+phone text ,
+bal_bf text,
+bal_nw text,
+amount text ,
+resp_log text ,
+user_id int ,
+status text ,
+the_time text ,
+request_id text ,
+via text ,
+browser text ,
+time_taken text ,
+trans_type text ,
+response_id text,
+run_code text,
+trans_method text ,
+queried text ,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+}
+//Default Datas to sdata (s-db)
+function addsddata(){
+global $wpdb;
+$sname='Vtupress Plugin';
+$semail='vtupress.com@gmail.com';
+$splan='MTN 500MB';
+$sphone= '07049626922';
+$bal_bf ='0';
+$bal_nw ='0';
+$samount= '0';
+$tid = '1';
+$sd_name = $wpdb->prefix.'sdata';
+$wpdb->insert($sd_name, array(
+'name'=> $sname,
+'email'=> $semail,
+'plan' => $splan,
+'phone' => $sphone,
+'bal_bf' => $bal_bf,
+'bal_nw' => $bal_nw,
+'amount' => $samount,
+'resp_log' => "sample of successful data log",
+'user_id' => $tid,
+'status' => "successful",
+'request_id' => '2022',
+'time_taken' => '0s',
+'browser' => 'CHROME',
+'via' => 'site',
+'trans_type' => 'vtu',
+'trans_method' => 'none',
+'queried' => '0',
+'the_time' => current_time('mysql', 1)
+));
+}
+
+
+//create vtu choice db
+function vtuchoice(){
+global $wpdb;
+$table_name = $wpdb->prefix.'vtuchoice';
+$charset_collate = $wpdb->get_charset_collate();
+$sql = "CREATE TABLE IF NOT EXISTS $table_name(
+id int NOT NULL AUTO_INCREMENT,
+vtuchoice text ,
+PRIMARY KEY (id))$charset_collate;";
+require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+}
+//create default data for vtuchoice
+function vtuchoiced(){
+global $wpdb;
+$table_name = $wpdb->prefix.'vtuchoice';
+$data = array('vtuchoice' => 'custom');
+$wpdb->insert($table_name,$data);
+}
+do_action('vpdb');
+
+function vtupress_create_message(){
+ global $wpdb;
+ $sd_name = $wpdb->prefix.'vp_chat';
+ $charset_collate=$wpdb->get_charset_collate();
+ $sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+ id int NOT NULL  AUTO_INCREMENT,
+ user_id int,
+ name text,
+ message text,
+ type text,
+ status text,
+ attachment text,
+ the_time text,
+ PRIMARY KEY (id))$charset_collate;";
+ require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+ dbDelta($sql); 
+}
+
+function vtupress_create_notification(){
+ global $wpdb;
+ $sd_name = $wpdb->prefix.'vp_notifications';
+ $charset_collate=$wpdb->get_charset_collate();
+ $sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+ id int NOT NULL AUTO_INCREMENT,
+ user_id int,
+ title text,
+ type text,
+ admin_link text,
+ user_link text,
+ status text,
+ message text,
+ the_time text,
+ PRIMARY KEY (id))$charset_collate;";
+ require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+ dbDelta($sql); 
+}
+
+function vtupress_create_profile(){
+ global $wpdb;
+ $sd_name = $wpdb->prefix.'vp_profile';
+ $charset_collate=$wpdb->get_charset_collate();
+ $sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+ id int NOT NULL AUTO_INCREMENT,
+ user_id int,
+ photo_link text,
+ the_time text,
+ PRIMARY KEY (id))$charset_collate;";
+ require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+ dbDelta($sql); 
+}
+
+
+function vtupress_create_trans_log(){
+  global $wpdb;
+  $sd_name = $wpdb->prefix.'vp_transactions';
+  $charset_collate=$wpdb->get_charset_collate();
+  $sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+  id int NOT NULL AUTO_INCREMENT,
+  user_id int,
+  name text,
+  email text,
+  service text,
+  request_id text,
+  bal_bf text,
+  bal_nw text,
+  recipient text,
+  amount text,
+  the_time text,
+  status text,
+  PRIMARY KEY (id))$charset_collate;";
+  require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+  dbDelta($sql); 
+ }
+
+ function vtupress_create_monwebhook(){
+  global $wpdb;
+  $sd_name = $wpdb->prefix.'vp_wallet_webhook';
+  $charset_collate=$wpdb->get_charset_collate();
+  $sql= "CREATE TABLE IF NOT EXISTS $sd_name(
+  id int NOT NULL AUTO_INCREMENT,
+  user_id int,
+  gateway text,
+  amount text,
+  referrence text,
+  status text,
+  response text,
+  the_time text,
+  PRIMARY KEY (id))$charset_collate;";
+  require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+  dbDelta($sql); 
+ }
+
+
+//Default Datas to sdata (s-db)
+function vtupress_add_message(){
+  global $wpdb;
+  $sd_name = $wpdb->prefix.'vp_chat';
+  $wpdb->insert($sd_name, array(
+  'user_id'=> "1",
+  'name' => 'Akor Victor',
+  'message'=> "Welcome To VTUPRESS. It is a priviledge to add this wonderful MINI chat system!",
+  'type' => "received",
+  'status' => "unread",
+  'attachment' => "none",
+  'the_time' => date('Y-m-d H:i:s A')
+  ));
+}
+
+
+function vtupress_db_man(){
+    vp_addoption("vp_funds_fixed",0);
+    vp_addoption("vp_trans_fixed",0);
+    vp_addoption("vp_enable_registration","yes");
+   
+   global $wpdb;
+   $user = $wpdb->prefix.'users';
+   $airtime = $wpdb->prefix.'sairtime';
+   $data = $wpdb->prefix.'sdata';
+   
+
+   
+   maybe_add_column($user,"vp_ban", "ALTER TABLE $user ADD vp_ban text");
+   maybe_add_column($user,"vp_bal", "ALTER TABLE $user ADD vp_bal text");
+   
+   $all_users = $wpdb->get_results("SELECT * FROM $user");
+   
+   foreach($all_users as $use){
+   
+    $id = $use->ID;
+    $bal = vp_getuser($id, 'vp_bal', true);
+    $access = vp_getuser($id, 'vp_user_access', true);
+   
+   $arr = ['vp_bal' => $bal, 'vp_ban' => $access ];
+   $where = ['ID' => $id];
+   $updated = $wpdb->update($user, $arr, $where);
+   
+   }
+   
+   maybe_add_column($airtime,"browser", "ALTER TABLE $airtime ADD browser text");
+   maybe_add_column($airtime,"queried", "ALTER TABLE $airtime ADD queried text");
+   maybe_add_column($airtime,"trans_type", "ALTER TABLE $airtime ADD trans_type text");
+   maybe_add_column($airtime,"trans_method", "ALTER TABLE $airtime ADD trans_method text");
+   maybe_add_column($airtime,"via", "ALTER TABLE $airtime ADD via text");
+   maybe_add_column($airtime,"time_taken", "ALTER TABLE $airtime ADD time_taken text");
+   maybe_add_column($airtime,"request_id", "ALTER TABLE $airtime ADD request_id text");
+   maybe_add_column($airtime,"response_id", "ALTER TABLE $airtime ADD response_id text");
+   maybe_add_column($airtime,"run_code", "ALTER TABLE $airtime ADD run_code text");
+   $wpdb->query("ALTER TABLE $airtime MODIFY COLUMN phone text");
+   $wpdb->query("ALTER TABLE $airtime MODIFY COLUMN the_time text");
+   
+   maybe_add_column($data,"browser", "ALTER TABLE $data ADD browser text");
+   maybe_add_column($data,"queried", "ALTER TABLE $data ADD queried text");
+   maybe_add_column($data,"trans_type", "ALTER TABLE $data ADD trans_type text");
+   maybe_add_column($data,"trans_method", "ALTER TABLE $data ADD trans_method text");
+   maybe_add_column($data,"via", "ALTER TABLE $data ADD via text");
+   maybe_add_column($data,"time_taken", "ALTER TABLE $data ADD time_taken text");
+   maybe_add_column($data,"request_id", "ALTER TABLE $data ADD request_id text");
+   maybe_add_column($data,"response_id", "ALTER TABLE $data ADD response_id text");
+   maybe_add_column($data,"run_code", "ALTER TABLE $data ADD run_code text");
+   $wpdb->query("ALTER TABLE $data MODIFY COLUMN phone text");
+   $wpdb->query("ALTER TABLE $data MODIFY COLUMN the_time text");
+   
+   if(is_plugin_active('bcmv/bcmv.php')){
+    $cable = $wpdb->prefix.'scable';
+    $bill = $wpdb->prefix.'sbill';
+    $wpdb->query("ALTER TABLE $cable MODIFY COLUMN iucno text");
+    $wpdb->query("ALTER TABLE $cable MODIFY COLUMN time text");
+    $wpdb->query("ALTER TABLE $bill MODIFY COLUMN meterno text");
+    $wpdb->query("ALTER TABLE $bill MODIFY COLUMN time text");
+    
+    
+    maybe_add_column($cable,"browser", "ALTER TABLE $cable ADD browser text");
+    maybe_add_column($cable,"queried", "ALTER TABLE $cable ADD queried text");
+    maybe_add_column($cable,"trans_type", "ALTER TABLE $cable ADD trans_type text");
+    maybe_add_column($cable,"trans_method", "ALTER TABLE $cable ADD trans_method text");
+    maybe_add_column($cable,"via", "ALTER TABLE $cable ADD via text");
+    maybe_add_column($cable,"time_taken", "ALTER TABLE $cable ADD time_taken text");
+    maybe_add_column($cable,"response_id", "ALTER TABLE $cable ADD response_id text");
+    maybe_add_column($cable,"run_code", "ALTER TABLE $cable ADD run_code text");
+    maybe_add_column($cable,"status", "ALTER TABLE $cable ADD status text");
+    
+    maybe_add_column($bill,"browser", "ALTER TABLE $bill ADD browser text");
+    maybe_add_column($bill,"queried", "ALTER TABLE $bill ADD queried text");
+    maybe_add_column($bill,"trans_type", "ALTER TABLE $bill ADD trans_type text");
+    maybe_add_column($bill,"trans_method", "ALTER TABLE $bill ADD trans_method text");
+    maybe_add_column($bill,"via", "ALTER TABLE $bill ADD via text");
+    maybe_add_column($bill,"time_taken", "ALTER TABLE $bill ADD time_taken text");
+    maybe_add_column($bill,"request_id", "ALTER TABLE $bill ADD request_id text");
+    maybe_add_column($bill,"charge", "ALTER TABLE $bill ADD charge text");
+    maybe_add_column($bill,"response_id", "ALTER TABLE $bill ADD response_id text");
+    maybe_add_column($bill,"run_code", "ALTER TABLE $bill ADD run_code text");
+    maybe_add_column($bill,"status", "ALTER TABLE $bill ADD status text");
+    }
+   
+    if(is_plugin_active('vpcards/vpcards.php')){
+     $scard = $wpdb->prefix."scards";
+     $wpdb->query("ALTER TABLE $scard MODIFY COLUMN pin text");
+     maybe_add_column($scard,"status", "ALTER TABLE $scard ADD status text");
+     
+     }
+     
+    if(is_plugin_active('vpepin/vpepin.php')){
+     $sepin = $wpdb->prefix."sepins";
+     $wpdb->query("ALTER TABLE $sepin MODIFY COLUMN pin text");
+     maybe_add_column($sepin,"status", "ALTER TABLE $sepin ADD status text");
+     
+     }
+   
+   
+   
+   
+      global $wpdb;
+      $table_name = $wpdb->prefix.'vp_transfer';
+      $charset_collate=$wpdb->get_charset_collate();
+      $sql= "CREATE TABLE IF NOT EXISTS $table_name(
+      id int NOT NULL  AUTO_INCREMENT,
+      tfrom text,
+      tto text,
+      amount text,
+      status text,
+      the_time text,
+      PRIMARY KEY (id))$charset_collate;";
+      require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+      dbDelta($sql);
+      
+   
+
+   
+}
+
+
+
+?>
